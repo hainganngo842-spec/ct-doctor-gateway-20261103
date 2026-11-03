@@ -9,7 +9,7 @@ const allowed=(method,path)=>method==='GET'&&(
   path==='/'||path==='/expired'||path==='/api/manifest'||path==='/api/workspace'||
   /^\/s\/[A-Za-z0-9_-]{20,256}$/.test(path)||/^\/api\/slice\/\d{4}\/(axial|coronal|sagittal)\/\d+$/.test(path)||
   path.startsWith('/viewer/')||path.startsWith('/assets/')||path==='/robots.txt'||path==='/favicon.ico'
-)||method==='POST'&&path==='/api/local';
+)||method==='POST'&&(path==='/api/local'||path==='/api/local/tiles');
 function cleanHeaders(headers){return Object.fromEntries(Object.entries(headers).filter(([name])=>!hopHeaders.has(name.toLowerCase())));}
 export function createGateway({upstream,dispatcher}={}){
   const origin=new URL(upstream);
@@ -39,6 +39,7 @@ export function createGateway({upstream,dispatcher}={}){
       const response=await request(new URL(url.pathname+url.search,origin),{dispatcher,method:req.method,headers,body,signal:controller.signal,headersTimeout:90000,bodyTimeout:90000,maxRedirections:0});
       const returned=cleanHeaders(response.headers);
       returned['cache-control']='private, no-store, max-age=0';
+      if(response.statusCode===200&&/^\/viewer\/assets\/[^/]+-[A-Za-z0-9_-]{8,}\.(js|css)$/.test(url.pathname))returned['cache-control']='public, max-age=31536000, immutable';
       if(returned['set-cookie']){const cookies=[returned['set-cookie']].flat().filter(v=>v.startsWith('ct_review_access='));if(cookies.length)returned['set-cookie']=cookies;else delete returned['set-cookie'];}
       if(typeof returned.location==='string'&&returned.location.startsWith(origin.origin+'/'))returned.location=returned.location.slice(origin.origin.length);
       res.writeHead(response.statusCode,returned);
