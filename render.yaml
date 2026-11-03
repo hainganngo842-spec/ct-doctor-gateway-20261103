@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: ct-doctor-review-20261103
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: CT_UPSTREAM_ORIGIN
+        value: https://ct-review-20261103-x7m4q9.vernalfort1.chatgpt.site
