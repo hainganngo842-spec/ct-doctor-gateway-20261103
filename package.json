@@ -3,7 +3,14 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "engines": {"node": "22.x"},
-  "scripts": {"start": "node server.mjs", "test": "node --test server.test.mjs"},
-  "dependencies": {"undici": "7.24.8"}
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test server.test.mjs"
+  },
+  "dependencies": {
+    "undici": "7.30.1"
+  }
 }
